@@ -47,12 +47,12 @@
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
-			<version>RELEASE</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>RELEASE</version>
+			<version>1.2.58</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
