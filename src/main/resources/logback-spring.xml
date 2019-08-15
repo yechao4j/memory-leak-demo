@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="1" debug="false">
+
+    <contextName>SpringCloud Gateway</contextName>
+
+    <property name="LOG_HOME" value="./logs/"/>
+    <property name="TRACE_HOME" value="/usr/local/tracing"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="gateway" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/gateway.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/gateway.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <MaxHistory>7</MaxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/api-access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/api-access.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <MaxHistory>1</MaxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name="ASYNC_ACCESS" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度，默认值为256 -->
+        <queueSize>1024</queueSize>
+        <!-- 往队列添加时，是否block，默认false[blockingQueue.put]，当队列满了后需要等待；如果设为true[blockingQueue.offer]，不等待，直接丢弃数据 -->
+        <neverBlock>true</neverBlock>
+        <includeCallerData>false</includeCallerData>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ACCESS"/>
+    </appender>
+
+    <appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${TRACE_HOME}/tracing.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>${TRACE_HOME}/tracing.log.%i</FileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>200MB</maxFileSize>
+        </triggeringPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name="ASYNC_TRACE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度，默认值为256 -->
+        <queueSize>512</queueSize>
+        <!-- 往队列添加时，是否block，默认false[blockingQueue.put]，当队列满了后需要等待；如果设为true[blockingQueue.offer]，不等待，直接丢弃数据 -->
+        <neverBlock>true</neverBlock>
+        <includeCallerData>false</includeCallerData>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="TRACE"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="gateway"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="ACCESS" level="DEBUG" additivity="false">
+        <appender-ref ref="ACCESS"/>
+    </logger>
+    <logger name="ASYNC_ACCESS" level="DEBUG" additivity="false">
+        <appender-ref ref="ASYNC_ACCESS"/>
+    </logger>
+    <logger name="ASYNC_TRACE" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_TRACE"/>
+    </logger>
+
+</configuration>

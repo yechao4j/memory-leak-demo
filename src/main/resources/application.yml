@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: springcloud-gateway
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 3000
+        response-timeout: PT15S
+        pool:
+          name: gateway
+
+      routes:
+        - id: httpbin
+          uri: http://baidu.com
+          predicates:
+            - Path=/**
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.cloud: info
+    reactor:
+      netty: debug
+eureka:
+  client:
+    enabled: false
